@@ -1,0 +1,3 @@
+[submodule "openssl_build_scripts"]
+	path = openssl_build_scripts
+	url = https://github.com/leenjewel/openssl_for_ios_and_android
