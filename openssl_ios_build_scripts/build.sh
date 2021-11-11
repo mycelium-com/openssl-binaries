@@ -115,9 +115,9 @@ do
     export CC="$(xcrun -sdk $sdk_type -find clang)"
     export CXX="$(xcrun -sdk $sdk_type -find clang++)"
     export CPP="$CC -E"
-    export CFLAGS="-arch $cpu -isysroot $PLATFORMPATH/$platform.platform/Developer/SDKs/$platform$SDKVERSION.sdk -m${sdk_type}-version-min=$SDKVERSION -Wno-error=implicit-function-declaration -fembed-bitcode"
+    export CFLAGS="-arch $cpu -isysroot $PLATFORMPATH/$platform.platform/Developer/SDKs/$platform$SDKVERSION.sdk -m${sdk_type}-version-min=12.0 -Wno-error=implicit-function-declaration -fembed-bitcode"
     export CPPFLAGS=$CFLAGS
-    export CXXFLAGS="-arch $cpu -isysroot $PLATFORMPATH/$platform.platform/Developer/SDKs/$platform$SDKVERSION.sdk -m${sdk_type}-version-min=$SDKVERSION -no-cpp-precomp -stdlib=libc++ -DHAVE_CXX_STDHEADERS -fembed-bitcode"
+    export CXXFLAGS="-arch $cpu -isysroot $PLATFORMPATH/$platform.platform/Developer/SDKs/$platform$SDKVERSION.sdk -m${sdk_type}-version-min=12.0 -no-cpp-precomp -stdlib=libc++ -DHAVE_CXX_STDHEADERS -fembed-bitcode"
     export AR=$(xcrun -sdk $sdk_type -find ar)
     export LIBTOOL=$(xcrun -sdk $sdk_type -find libtool)
     export NM=$(xcrun -sdk $sdk_type -find nm)
