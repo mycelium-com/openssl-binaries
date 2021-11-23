@@ -8,7 +8,6 @@ tools/*-android-toolchain
 tools/curl*
 tools/openssl*
 tools/protobuf*
-output/
 .xcuserstate
 
 nghttp2-*
