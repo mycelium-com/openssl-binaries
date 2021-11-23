@@ -1,2 +1,0 @@
-include ':app'
-rootProject.name='test_curl_with_ssl_and_http2_android'
