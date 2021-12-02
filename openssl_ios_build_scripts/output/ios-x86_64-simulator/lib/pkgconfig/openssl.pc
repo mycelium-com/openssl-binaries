@@ -1,9 +1,9 @@
-prefix=/Users/alexi/AndroidStudioProjects/prox-android/wallet-cxx-core/wallet-core/wallet-core/mycelium-crypto/openssl-binaries/openssl_ios_build_scripts/output/ios-x86_64-simulator
+prefix=/Users/alexi/Devel/wallet-core/wallet-core/mycelium-crypto/openssl-binaries/openssl_ios_build_scripts/output/ios-x86_64-simulator
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: OpenSSL
 Description: Secure Sockets Layer and cryptography libraries and tools
-Version: 1.1.1d
+Version: 3.0.0
 Requires: libssl libcrypto
