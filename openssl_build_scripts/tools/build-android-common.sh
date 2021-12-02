@@ -46,11 +46,14 @@ function get_toolchain() {
   CYGWIN* | *_NT-*) HOST_OS=cygwin ;;
   esac
 
-  HOST_ARCH=$(uname -m)
-  case ${HOST_ARCH} in
-  i?86) HOST_ARCH=x86 ;;
-  x86_64 | amd64) HOST_ARCH=x86_64 ;;
-  esac
+  #HOST_ARCH=$(uname -m)
+  #case ${HOST_ARCH} in
+  #i?86) HOST_ARCH=x86 ;;
+  #x86_64 | amd64) HOST_ARCH=x86_64 ;;
+  #esac
+
+  # Hack x86_64 for now
+  HOST_ARCH=x86_64
 
   echo "${HOST_OS}-${HOST_ARCH}"
 }
