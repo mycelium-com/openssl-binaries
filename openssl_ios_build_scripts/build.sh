@@ -98,9 +98,9 @@ do
     export CC="$(xcrun -sdk $sdk_type -find clang)"
     export CXX="$(xcrun -sdk $sdk_type -find clang++)"
     export CPP="$CC -E"
-    export CFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=12.0 -Wno-error=implicit-function-declaration"
+    export CFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 -Wno-error=implicit-function-declaration"
     export CPPFLAGS=$CFLAGS
-    export CXXFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=12.0 -no-cpp-precomp -stdlib=libc++ -DOPENSSL_NO_INTTYPES_H -DHAVE_CXX_STDHEADERS"
+    export CXXFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 -no-cpp-precomp -stdlib=libc++ -DOPENSSL_NO_INTTYPES_H -DHAVE_CXX_STDHEADERS"
     export AR=$(xcrun -sdk $sdk_type -find ar)
     export LIBTOOL=$(xcrun -sdk $sdk_type -find libtool)
     export NM=$(xcrun -sdk $sdk_type -find nm)
@@ -124,8 +124,8 @@ do
     ./Configure $ossl_target "-arch $cpu -fembed-bitcode" no-tests no-asm no-shared no-engine no-async --prefix=$target_dir
 
     echo "Compiling for $build_os..."
-    make -j $(sysctl -n hw.physicalcpu)
-    make install_sw install_ssldirs 2> /dev/null
+    make -j $(sysctl -n hw.physicalcpu) build_libs
+    make install_dev 2> /dev/null
     echo Done
 
     cd $ROOT
