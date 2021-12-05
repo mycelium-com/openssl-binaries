@@ -1,4 +1,4 @@
-prefix=/Users/alexi/Devel/wallet-core/wallet-core/mycelium-crypto/openssl-binaries/openssl_ios_build_scripts/output/macos-x86_64
+prefix=/Users/alexi/Devel/openssl-binaries/openssl_ios_build_scripts/output/macos-x86_64
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
