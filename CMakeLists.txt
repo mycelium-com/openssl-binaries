@@ -38,22 +38,22 @@ endif()
 
 elseif (ANDROID)
 set (OPENSSL_USE_STATIC_LIBS TRUE)
-set (OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI})
-set (OPENSSL_INCLUDE_DIR $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/include>)
-set (OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/lib/libcrypto.a)
-set (OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/lib/libssl.a)
+set (OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI})
+set (OPENSSL_INCLUDE_DIR $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/include>)
+set (OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/lib/libcrypto.a)
+set (OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/lib/libssl.a)
 if (NOT TARGET crypto)
     add_library(crypto STATIC IMPORTED)
     set_target_properties(crypto PROPERTIES
-            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/lib/libcrypto.a
-            INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/include>)
+            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/lib/libcrypto.a
+            INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/include>)
 endif()
 
 if (NOT TARGET ssl)
     add_library(ssl STATIC IMPORTED)
     set_target_properties(ssl PROPERTIES
-            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/lib/libssl.a
-            INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/openssl-${ANDROID_ABI}/include>)
+            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/lib/libssl.a
+            INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/openssl_build_scripts/output/${BUNDLE_SUBDIR}/${ANDROID_ABI}/include>)
 endif()
 
 else()
