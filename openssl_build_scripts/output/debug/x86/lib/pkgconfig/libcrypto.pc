@@ -1,0 +1,12 @@
+prefix=/Users/alexi/Devel/openssl-binaries/openssl_build_scripts/tools/../output/debug/x86
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+enginesdir=${libdir}/engines-3
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: 3.0.0
+Libs: -L${libdir} -lcrypto
+Libs.private: -ldl -pthread -latomic
+Cflags: -I${includedir}

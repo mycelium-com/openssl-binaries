@@ -173,29 +173,38 @@ function set_android_cpu_feature() {
   local name=$1
   local arch=$(get_android_arch $2)
   local api=$3
+  local build_type=$4
+  
+  opt_flags="-g -Og"
+  opt_link_flags="-Og"
+  if [ "${build_type}" = "release" ]; then
+      opt_flags="-O3 -fno-unroll-loops -ffast-math"
+      opt_link_flags="-O3"
+  fi
+  
   case ${arch} in
   arm-v7a | arm-v7a-neon)
-    export CFLAGS="-march=armv7-a -g -mfpu=vfpv3-d16 -mfloat-abi=softfp -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -Og -ffunction-sections -fdata-sections $(get_common_includes)"
-    export CXXFLAGS="-std=c++14 -Og -g -ffunction-sections -fdata-sections"
-    export LDFLAGS="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=softfp -Wl,--fix-cortex-a8 -Wl,--gc-sections -Og -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
+    export CFLAGS="-march=armv7-a ${opt_flags} -mfpu=vfpv3-d16 -mfloat-abi=softfp -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -ffunction-sections -fdata-sections $(get_common_includes)"
+    export CXXFLAGS="-std=c++14 ${opt_flags} -ffunction-sections -fdata-sections"
+    export LDFLAGS="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=softfp -Wl,--fix-cortex-a8 -Wl,--gc-sections ${opt_link_flags} -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
     export CPPFLAGS=${CFLAGS}
     ;;
   arm64-v8a)
-    export CFLAGS="-march=armv8-a -g -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -Og -ffunction-sections -fdata-sections $(get_common_includes)"
-    export CXXFLAGS="-std=c++14 -Og -g -ffunction-sections -fdata-sections"
-    export LDFLAGS="-march=armv8-a -Wl,--gc-sections -Og -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
+    export CFLAGS="-march=armv8-a ${opt_flags} -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -ffunction-sections -fdata-sections $(get_common_includes)"
+    export CXXFLAGS="-std=c++14 ${opt_flags} -ffunction-sections -fdata-sections"
+    export LDFLAGS="-march=armv8-a -Wl,--gc-sections ${opt_link_flags} -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
     export CPPFLAGS=${CFLAGS}
     ;;
   x86)
-    export CFLAGS="-march=i686 -g -mtune=intel -mssse3 -mfpmath=sse -m32 -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -Og -ffunction-sections -fdata-sections $(get_common_includes)"
-    export CXXFLAGS="-std=c++14 -Og -g -ffunction-sections -fdata-sections"
-    export LDFLAGS="-march=i686 -Wl,--gc-sections -Og -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
+    export CFLAGS="-march=i686 ${opt_flags} -mtune=intel -mssse3 -mfpmath=sse -m32 -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -ffunction-sections -fdata-sections $(get_common_includes)"
+    export CXXFLAGS="-std=c++14 ${opt_flags} -ffunction-sections -fdata-sections"
+    export LDFLAGS="-march=i686 -Wl,--gc-sections ${opt_link_flags} -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
     export CPPFLAGS=${CFLAGS}
     ;;
   x86-64)
-    export CFLAGS="-march=x86-64 -g -msse4.2 -mpopcnt -m64 -mtune=intel -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -Og -ffunction-sections -fdata-sections $(get_common_includes)"
-    export CXXFLAGS="-std=c++14 -Og -g -ffunction-sections -fdata-sections"
-    export LDFLAGS="-march=x86-64 -Wl,--gc-sections -Og -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
+    export CFLAGS="-march=x86-64 ${opt_flags} -msse4.2 -mpopcnt -m64 -mtune=intel -Wno-unused-function -fno-integrated-as -fstrict-aliasing -fPIC -DANDROID -D__ANDROID_API__=${api} -ffunction-sections -fdata-sections $(get_common_includes)"
+    export CXXFLAGS="-std=c++14 ${opt_flags} -ffunction-sections -fdata-sections"
+    export LDFLAGS="-march=x86-64 -Wl,--gc-section ${opt_link_flags}s -ffunction-sections -fdata-sections $(get_common_linked_libraries ${api} ${arch})"
     export CPPFLAGS=${CFLAGS}
     ;;
   esac

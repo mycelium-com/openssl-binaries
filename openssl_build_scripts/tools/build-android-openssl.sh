@@ -36,7 +36,6 @@ echo pwd_path=${pwd_path}
 echo TOOLS_ROOT=${TOOLS_ROOT}
 
 LIB_NAME="openssl-3.0.0"
-LIB_DEST_DIR="${pwd_path}/../output/android/openssl-universal"
 
 echo "https://www.openssl.org/source/${LIB_NAME}.tar.gz"
 
@@ -44,7 +43,7 @@ echo "https://www.openssl.org/source/${LIB_NAME}.tar.gz"
 # https://github.com/openssl/openssl/archive/OpenSSL_1_1_1f.tar.gz
 DEVELOPER=$(xcode-select -print-path)
 SDK_VERSION=$(xcrun -sdk iphoneos --show-sdk-version)
-rm -rf "${LIB_DEST_DIR}" "${LIB_NAME}"
+rm -rf "${LIB_NAME}"
 [ -f "${LIB_NAME}.tar.gz" ] || curl https://www.openssl.org/source/${LIB_NAME}.tar.gz >${LIB_NAME}.tar.gz
 
 set_android_toolchain_bin
@@ -54,8 +53,9 @@ function configure_make() {
     ARCH=$1
     ABI=$2
     ABI_TRIPLE=$3
+    CONFIG=$4
 
-    log_info "configure $ABI start..."
+    log_info "configure $CONFIG $ABI start..."
 
     if [ -d "${LIB_NAME}" ]; then
         rm -fr "${LIB_NAME}"
@@ -64,17 +64,17 @@ function configure_make() {
     pushd .
     cd "${LIB_NAME}"
 
-    PREFIX_DIR="${pwd_path}/../output/android/openssl-${ABI}"
+    PREFIX_DIR="${pwd_path}/../output/${CONFIG}/${ABI}"
     if [ -d "${PREFIX_DIR}" ]; then
         rm -fr "${PREFIX_DIR}"
     fi
     mkdir -p "${PREFIX_DIR}"
 
-    OUTPUT_ROOT=${TOOLS_ROOT}/../output/android/openssl-${ABI}
+    OUTPUT_ROOT=${TOOLS_ROOT}/../output/${CONFIG}/${ABI}
     mkdir -p ${OUTPUT_ROOT}/log
 
     set_android_toolchain "openssl" "${ARCH}" "${ANDROID_API}"
-    set_android_cpu_feature "openssl" "${ARCH}" "${ANDROID_API}"
+    set_android_cpu_feature "openssl" "${ARCH}" "${ANDROID_API}" "${CONFIG}"
 
     export ANDROID_NDK_HOME=${ANDROID_NDK_ROOT}
     echo ANDROID_NDK_HOME=${ANDROID_NDK_HOME}
@@ -101,12 +101,11 @@ function configure_make() {
         log_error "not support" && exit 1
     fi
 
-    log_info "make $ABI start..."
+    log_info "make $CONFIG $ABI start..."
 
     make clean >"${OUTPUT_ROOT}/log/${ABI}.log"
-    if make -j$(get_cpu_count) >>"${OUTPUT_ROOT}/log/${ABI}.log" 2>&1; then
-        make install_sw >>"${OUTPUT_ROOT}/log/${ABI}.log" 2>&1
-        make install_ssldirs >>"${OUTPUT_ROOT}/log/${ABI}.log" 2>&1
+    if make -j$(get_cpu_count) build_libs >>"${OUTPUT_ROOT}/log/${ABI}.log" 2>&1; then
+        make install_dev >>"${OUTPUT_ROOT}/log/${ABI}.log" 2>&1
     fi
 
     popd
@@ -116,7 +115,8 @@ log_info "${PLATFORM_TYPE} ${LIB_NAME} start..."
 
 for ((i = 0; i < ${#ARCHS[@]}; i++)); do
     if [[ $# -eq 0 || "$1" == "${ARCHS[i]}" ]]; then
-        configure_make "${ARCHS[i]}" "${ABIS[i]}" "${ABI_TRIPLES[i]}"
+        configure_make "${ARCHS[i]}" "${ABIS[i]}" "${ABI_TRIPLES[i]}" debug
+        configure_make "${ARCHS[i]}" "${ABIS[i]}" "${ABI_TRIPLES[i]}" release
     fi
 done
 

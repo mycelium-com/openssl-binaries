@@ -85,22 +85,28 @@ then
     tar -xzf $ROOT/${LIB_NAME}.tar.gz
 fi
 
-# All targets are processed separately
-for build_os in ios-arm64 ios-arm64-simulator ios-x86_64-simulator macos-arm64 macos-x86_64
-do
+function build_for() {
+    build_os=$1
+    build_type=$2
+
     platform=$(get_build_platform $build_os)
     cpu=$(get_build_cpu $build_os)
     sdk_type=$(get_sdk_type $build_os)
     sdk_path=$(get_sdk_path $sdk_type)
     ossl_target=$(get_ossl_target_type $build_os)
+    optimize_flags="-Og -g"
+    
+    if [ "${build_type}" = "release" ]; then
+        optimize_flags=" -Oz -fno-unroll-loops -ffast-math -flto"
+    fi
 
     # Setup build utilities info
     export CC="$(xcrun -sdk $sdk_type -find clang)"
     export CXX="$(xcrun -sdk $sdk_type -find clang++)"
     export CPP="$CC -E"
-    export CFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 -Wno-error=implicit-function-declaration"
+    export CFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 ${optimize_flags} -Wno-error=implicit-function-declaration"
     export CPPFLAGS=$CFLAGS
-    export CXXFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 -no-cpp-precomp -stdlib=libc++ -DOPENSSL_NO_INTTYPES_H -DHAVE_CXX_STDHEADERS"
+    export CXXFLAGS="-arch $cpu -isysroot ${sdk_path} -m${sdk_type}-version-min=11.0 ${optimize_flags} -no-cpp-precomp -stdlib=libc++ -DOPENSSL_NO_INTTYPES_H -DHAVE_CXX_STDHEADERS"
     export AR=$(xcrun -sdk $sdk_type -find ar)
     export LIBTOOL=$(xcrun -sdk $sdk_type -find libtool)
     export NM=$(xcrun -sdk $sdk_type -find nm)
@@ -109,7 +115,7 @@ do
     export STRIP=$(xcrun -sdk $sdk_type -find strip)
     export LDFLAGS="-arch $cpu -isysroot ${sdk_path}"
     
-    target_dir=$ROOT/output/$build_os
+    target_dir=$ROOT/output/$build_type/$build_os
 
     rm -rf $target_dir
     mkdir -p $target_dir
@@ -120,15 +126,23 @@ do
     make clean 2> /dev/null
     make distclean 2> /dev/null
 
-    echo "Configuring for $build_os..."
+    echo "Configuring $build_type for $build_os..."
     ./Configure $ossl_target "-arch $cpu -fembed-bitcode" no-tests no-asm no-shared no-engine no-async --prefix=$target_dir
 
-    echo "Compiling for $build_os..."
+    echo "Compiling $build_type for $build_os..."
     make -j $(sysctl -n hw.physicalcpu) build_libs
     make install_dev 2> /dev/null
     echo Done
 
     cd $ROOT
+
+}
+
+# All targets are processed separately
+for build_os in ios-arm64 ios-arm64-simulator ios-x86_64-simulator macos-arm64 macos-x86_64
+do
+    build_for $build_os debug
+    build_for $build_os release
 done
 
 # Removing sources
